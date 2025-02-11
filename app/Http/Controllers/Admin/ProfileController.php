@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Traits\AuthorizationsTrait;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,6 +12,7 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    use AuthorizationsTrait;
     /**
      * Display the user's profile form.
      */
@@ -20,6 +21,7 @@ class ProfileController extends Controller
         $data['title'] = 'پروفایل';
         $data['active'] = 'profile';
         $data['user'] = $request->user();
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view('profile.edit', $data);
     }

@@ -72,9 +72,12 @@
                                     <a class="nav-link {{ $active == 'profile' ? 'active' : '' }}"
                                         href="{{ url('profile', []) }}">پروفایل</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('posts', []) }}">میزکار</a>
-                                </li>
+
+                                @can('manage-posts', App\Models\Post::class)
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('posts', []) }}">میزکار</a>
+                                    </li>
+                                @endcan
                             @else
                                 <li class="nav-item">
                                     <a class="nav-link  {{ $active == 'login' ? 'active' : '' }}"

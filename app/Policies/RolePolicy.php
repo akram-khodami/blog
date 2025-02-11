@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class RolePolicy
 {
@@ -41,7 +42,18 @@ class RolePolicy
      */
     public function create(User $user)
     {
-        //
+        //===گرفتن اجازه های کاربر
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        //===شرط اول
+        if (!in_array('create-role', $permissions_array)) {
+
+            return Response::deny('شما اجازه ثبت نقش کاربری را ندارید.');
+
+        }
+
+        return true;
+
     }
 
     /**
@@ -53,7 +65,15 @@ class RolePolicy
      */
     public function update(User $user, Role $role)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('update-role', $permissions_array)) {
+
+            return Response::deny('شما مجوز ویرایش نقش کاربری ها را ندارید.');
+
+        }
+
+        return true;
     }
 
     /**
@@ -65,7 +85,15 @@ class RolePolicy
      */
     public function delete(User $user, Role $role)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('delete-role', $permissions_array)) {
+
+            return Response::deny('شما مجوز حذف نقش کاربری ها را ندارید.');
+
+        }
+
+        return true;
     }
 
     /**
@@ -91,4 +119,53 @@ class RolePolicy
     {
         //
     }
+
+
+    /**
+     * 
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Role  $role
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function addPermissionToRole(User $user, Role $role)
+    {
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('add-permission-to-role', $permissions_array)) {
+
+            return Response::deny('شما مجوز افزودن اجازه برای نقش کاربری ها را ندارید.');
+
+        }
+
+        return true;
+    }
+
+    public function manageRoles(User $user)
+    {
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('manage-roles', $permissions_array)) {
+
+            return Response::deny('شما مجوز دسترسی به مدیریت نقش ها را ندارید.');
+
+        }
+
+        return true;
+    }
+
+    public function getUserPermissionsArray($user)
+    {
+        $permissions_array = $user->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('ability')
+            ->toArray();
+
+        return $permissions_array;
+
+    }
+
 }

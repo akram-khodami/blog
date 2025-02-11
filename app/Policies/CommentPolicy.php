@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class CommentPolicy
 {
@@ -53,7 +54,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment)
     {
-        //
+
     }
 
     /**
@@ -90,5 +91,32 @@ class CommentPolicy
     public function forceDelete(User $user, Comment $comment)
     {
         //
+    }
+
+    public function manageComments(User $user)
+    {
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('manage-comments', $permissions_array)) {
+
+            return Response::deny('شما مجوز دسترسی به مدیریت نظرات را ندارید.');
+
+        }
+
+        return true;
+    }
+
+    public function getUserPermissionsArray($user)
+    {
+        $permissions_array = $user->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('ability')
+            ->toArray();
+
+        return $permissions_array;
+
     }
 }

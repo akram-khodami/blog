@@ -58,6 +58,7 @@
                 <tr>
                     <th>ردیف</th>
                     <th>عنوان</th>
+                    <th>نویسنده</th>
                     <th>تاریخ</th>
                     <th>عملیات</th>
                 </tr>
@@ -70,13 +71,8 @@
                     <tr>
                         <td>{{ $i }}</td>
                         <td>{{ $post->title }}</td>
-                        <td>
-                            <?php
-                            $date = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($post->created_at));
-                            
-                            echo \Morilog\Jalali\CalendarUtils::convertNumbers($date);
-                            ?>
-                        </td>
+                        <td>{{ $post->user->name }}</td>
+                        <td>@jalali($post->created_at)</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <a href="{{ url('posts/' . $post->id . '/edit') }}"

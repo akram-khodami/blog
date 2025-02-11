@@ -2,13 +2,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Traits\AuthorizationsTrait;
 use App\Models\Tag;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use Auth;
+use Illuminate\Support\Facades\Gate;
 
 class TagController extends Controller
 {
+    use AuthorizationsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -16,9 +19,12 @@ class TagController extends Controller
      */
     public function index()
     {
+        Gate::authorize('manageTags', Tag::class);
+
         $data['title'] = 'فهرست تگ ها';
         $data['tags'] = Tag::orderBy("created_at", "desc")->paginate(10);
         $data['active'] = 'tags';
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view("admin.tag.all", $data);
     }
@@ -41,6 +47,8 @@ class TagController extends Controller
      */
     public function store(StoreTagRequest $request)
     {
+        Gate::authorize('create', Tag::class);
+
         Tag::create($request->all());
 
         return redirect()->back()->with("success_message", "تگ با موفقیت ثبت شد.");
@@ -50,7 +58,7 @@ class TagController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
     public function show(Tag $tag)
@@ -61,7 +69,7 @@ class TagController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
     public function edit(Tag $tag)
@@ -70,6 +78,7 @@ class TagController extends Controller
         $data['tag'] = $tag;
         $data['tags'] = Tag::orderBy("created_at", "desc")->paginate(10);
         $data['active'] = 'tags';
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view("admin.tag.all", $data);
     }
@@ -78,11 +87,13 @@ class TagController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateTagRequest  $request
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateTagRequest $request, Tag $tag)
     {
+        Gate::authorize('update', $tag);
+
         $tag->title = $request->title;
         $tag->save();
 
@@ -93,11 +104,13 @@ class TagController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
     public function destroy(Tag $tag)
     {
+        Gate::authorize('delete', $tag);
+
         $tag->posts()->detach();
 
         $tag->delete();
@@ -105,4 +118,5 @@ class TagController extends Controller
         return redirect()->back()->with('success_message', 'تگ با موفقیت حذف شد.');
 
     }
+
 }

@@ -12,13 +12,19 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('role_user', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('role_id');
+            $table->text('content');
+            $table->string('name', 255)->default('ناشناس');
+            $table->string('email')->nullable();
+            $table->boolean('confirmed')->default(0);
             $table->unsignedBigInteger('user_id');
-            $table->foreign('role_id')->references('id')->on('roles');
             $table->foreign('user_id')->references('id')->on('users');
+//            $table->unsignedBigInteger('post_id');
+//            $table->foreign('post_id')->references('id')->on('posts');
+            $table->foreignId('post_id')->constrained();
             $table->timestamps();
+
         });
     }
 
@@ -29,6 +35,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('comments');
     }
 };

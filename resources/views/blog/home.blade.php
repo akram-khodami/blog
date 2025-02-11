@@ -106,10 +106,7 @@
                             {{ 'نوشته شده توسط ' . ':' . $post->user->name . ' ' . $post->created_at }}
                         </p>
                         <small dir="ltr" class="">
-                            <?php
-                            $date = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($post->created_at));
-                            echo \Morilog\Jalali\CalendarUtils::convertNumbers($date);
-                            ?>
+                            @jalali($post->created_at)
                         </small>
                         </p>
                         <h2 class="most_text">

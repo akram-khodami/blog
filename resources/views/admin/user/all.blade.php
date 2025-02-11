@@ -26,11 +26,11 @@
                 </thead>
                 <tbody>
                     @foreach ($users as $user)
-                        <tr>
+                        <tr id="tr{{ $user->id }}">
                             <td>{{ $i }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->active == 1 ? 'فعال' : 'غیرفعال' }}</td>
+                            <td id="active_status{{ $user->id }}">{{ $user->active == 1 ? 'فعال' : 'غیرفعال' }}</td>
                             <td>
                                 @if (count($user->roles) > 0)
                                     @foreach ($user->roles as $role)
@@ -43,17 +43,53 @@
                                 @endif
                             </td>
                             <td>
-                                <i class="btn fa fa-trash-alt text-danger" onclick="deleteUser({{ $user->id }})"></i>
 
-                                <a href="{{ url('users/' . $user->id . '/edit') }}">
-                                    <i class="btn fa fa-pencil-alt text-warning"></i>
-                                </a>
+                                <button type="button" title="ویرایش کاربر" class="btn btn-link" data-toggle="modal"
+                                    data-target="#editUserModal{{ $user->id }}">
+                                    <i class="btn fas fa-user-edit text-warning"></i>
+                                </button>
 
                                 <button type="button" class="btn btn-link" data-toggle="modal"
                                     data-target="#addRoleToUserModal" title="افزودن نقش"
                                     onclick="set_record_id({{ $user->id }},'user_id')">
-                                    <i class="fa fa fa-street-view text-success"></i>
+                                    <i class="btn fa fa fa-street-view text-success"></i>
                                 </button>
+
+                                @if ($user->active)
+                                    <i class="btn fas fa-user-lock text-dark" id="inActiveUser{{ $user->id }}"
+                                        onclick="inActiveUser({{ $user->id }})" title="غیر فعال کردن کاربر"></i>
+                                @else
+                                    <i class="btn fas fa-user-check text-success" id="activeUser{{ $user->id }}"
+                                        onclick="activeUser({{ $user->id }})" title="فعال کردن کاربر"></i>
+                                @endif
+
+                                @if (!$user->is_permannet)
+                                    <i class="btn fa fa-user-times text-danger" title="حذف کاربر"
+                                        onclick="deleteUser({{ $user->id }})" aria-hidden="true"></i>
+                                @endif
+
+                                <!-- edit user modal -->
+                                <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1" role="dialog"
+                                    aria-labelledby="editUserModal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary">
+                                                <h5 class="modal-title" id="editUserModalLongTitle">ویرایش کاربر</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @include('admin.user.edit')
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">بسته</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </td>
                         </tr>
@@ -74,36 +110,13 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h5 class="modal-title" id="exampleModalLongTitle">افزودن کاربر</h5>
+                    <h5 class="modal-title" id="addUserModalLongTitle">افزودن کاربر</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ url('users') }}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="name">نام</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                placeholder="نام را وارد کنید">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">ایمیل</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                placeholder="ایمیل را وارد نمایید">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">کلمه عبور</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="کلمه عبور">
-                        </div>
-                        <div class="form-group">
-                            <label for="password_confirmation">تکرار کلمه عبور</label>
-                            <input type="password" class="form-control" id="password_confirmation"
-                                name="password_confirmation" placeholder="تکرار کلمه عبور">
-                        </div>
-                        <input type="submit" class="btn btn-outline-success" value="ذخیره">
-                    </form>
+                    @include('admin.user.create')
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">بسته</button>
@@ -117,7 +130,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h5 class="modal-title" id="exampleModalLongTitle">افزودن نقش</h5>
+                    <h5 class="modal-title" id="addRoleToUserModalLongTitle">افزودن نقش</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -152,7 +165,7 @@
 @endsection
 @section('external_script')
     <script src="{{ url('js/select2.min.js') }}"></script>
-    <script src="{{ url('js/blog.js') }}"></script>
+    <script src="{{ url('js/blog.js?v=' . time()) }}"></script>
 @endsection
 @section('internal_script')
     <script>

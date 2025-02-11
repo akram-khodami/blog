@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
-class PermissionPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
@@ -26,10 +25,10 @@ class PermissionPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Permission $permission)
+    public function view(User $user, User $model)
     {
         //
     }
@@ -46,9 +45,9 @@ class PermissionPolicy
         $permissions_array = $this->getUserPermissionsArray($user);
 
         //===شرط اول
-        if (!in_array('create-permission', $permissions_array)) {
+        if (!in_array('create-user', $permissions_array)) {
 
-            return Response::deny('شما مجوز ثبت اجازه را ندارید.');
+            return Response::deny('شما اجازه ثبت کاربر را ندارید.');
 
         }
 
@@ -60,16 +59,16 @@ class PermissionPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Permission $permission)
+    public function update(User $user, User $model)
     {
         $permissions_array = $this->getUserPermissionsArray($user);
 
-        if (!in_array('update-permission', $permissions_array)) {
+        if (!in_array('update-user', $permissions_array)) {
 
-            return Response::deny('شما مجوز ویرایش اجازه ها را ندارید.');
+            return Response::deny('شما مجوز ویرایش کاربر ها را ندارید.');
 
         }
 
@@ -80,16 +79,16 @@ class PermissionPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Permission $permission)
+    public function delete(User $user, User $model)
     {
         $permissions_array = $this->getUserPermissionsArray($user);
 
-        if (!in_array('delete-permission', $permissions_array)) {
+        if (!in_array('delete-user', $permissions_array)) {
 
-            return Response::deny('شما مجوز حذف اجازه ها را ندارید.');
+            return Response::deny('شما مجوز حذف کاربر ها را ندارید.');
 
         }
 
@@ -100,10 +99,10 @@ class PermissionPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Permission $permission)
+    public function restore(User $user, User $model)
     {
         //
     }
@@ -112,25 +111,71 @@ class PermissionPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Permission $permission)
+    public function forceDelete(User $user, User $model)
     {
         //
     }
-    public function managePermissions(User $user)
+
+
+    /**
+     * Determine whether the user can add role to user.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function addUserRole(User $user)
+    {
+        //===گرفتن اجازه های کاربر
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        //===شرط اول
+        if (!in_array('add-user-role', $permissions_array)) {
+
+            return Response::deny('شما اجازه اعطا نقش کاربری به کاربران را ندارید.');
+
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Determine whether the user can remove role of user.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteUserRole(User $user)
+    {
+        //===گرفتن اجازه های کاربر
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        //===شرط اول
+        if (!in_array('delete-user-role', $permissions_array)) {
+
+            return Response::deny('شما اجازه حذف نقش کاربری کاربران را ندارید.');
+
+        }
+
+        return true;
+
+    }
+    public function manageUsers(User $user)
     {
         $permissions_array = $this->getUserPermissionsArray($user);
 
-        if (!in_array('manage-permissions', $permissions_array)) {
+        if (!in_array('manage-users', $permissions_array)) {
 
-            return Response::deny('شما مجوز دسترسی به مدیریت اجازه ها را ندارید.');
+            return Response::deny('شما مجوز دسترسی به مدیریت کاربران را ندارید.');
 
         }
 
         return true;
     }
+
     public function getUserPermissionsArray($user)
     {
         $permissions_array = $user->roles()
@@ -144,5 +189,4 @@ class PermissionPolicy
         return $permissions_array;
 
     }
-
 }

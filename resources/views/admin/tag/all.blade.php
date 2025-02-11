@@ -1,4 +1,9 @@
 @extends('theme.admin_theme')
+@section('operations')
+    <a href="{{ url('tags') }}" class="btn btn-outline-success btn-sm btn-shadow">
+        <i class="fa fa-plus text-sucess"></i>
+    </a>
+@endsection
 @section('content')
     @include('admin.tag.create')
     <div class="table-responsive mt-1">
@@ -19,16 +24,11 @@
                     <tr>
                         <td>{{ $i }}</td>
                         <td>{{ $tag->title }}</td>
-                        <td>
-                            <?php
-                            $date = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($tag->created_at));
-                            
-                            echo \Morilog\Jalali\CalendarUtils::convertNumbers($date);
-                            ?>
-                        </td>
+                        <td>@jalali($tag->created_at)</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{{ url('tags/' . $tag->id . '/edit') }}" class="btn btn-outline-warning btn-sm btn-shadow">
+                                <a href="{{ url('tags/' . $tag->id . '/edit') }}"
+                                    class="btn btn-outline-warning btn-sm btn-shadow">
                                     <i class="fa fa-pencil"></i>
                                 </a>
                                 <form action={{ url('tags', ['id' => $tag->id]) }} method="POST">

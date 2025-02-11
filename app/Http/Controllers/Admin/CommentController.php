@@ -2,14 +2,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Traits\AuthorizationsTrait;
 use App\Models\Comment;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Post;
+use Auth;
+use Gate;
 
 class CommentController extends Controller
 {
+    use AuthorizationsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -17,6 +20,8 @@ class CommentController extends Controller
      */
     public function index()
     {
+        Gate::authorize('manageComments', Comment::class);
+
         $post_id = request('post');
         $confirmed = request('confirmed');
 
@@ -67,6 +72,7 @@ class CommentController extends Controller
         $data['title'] = $title;
         $data['comments'] = $comments;
         $data['active'] = 'comments';
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view('admin.comment.all', $data);
     }
@@ -134,6 +140,8 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        Gate::authorize('manageComments', Comment::class);
+
         $comment->delete();
     }
 
@@ -141,6 +149,8 @@ class CommentController extends Controller
 
     public function confirmComment($id)
     {
+        Gate::authorize('manageComments', Comment::class);
+
         $comment = Comment::find($id);
 
         $comment->confirmed = 1;
@@ -150,4 +160,5 @@ class CommentController extends Controller
         return redirect()->back()->with('success_message', value: 'نظر با موفقیت تایید شد.');
 
     }
+  
 }

@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('active')->default(false);
+            $table->boolean('is_permanent')->default(false)->comment('قابلیت حذف');
             $table->rememberToken();
             $table->timestamps();
         });

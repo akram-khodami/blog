@@ -50,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class);
     Route::post('addUserRole', [UserController::class, 'addUserRole']);
     Route::delete('deleteUserRole', [UserController::class, 'deleteUserRole']);
+    Route::post('activeUser', [UserController::class, 'activeUser']);
+    Route::post('inActiveUser', [UserController::class, 'inActiveUser']);
+
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

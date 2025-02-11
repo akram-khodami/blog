@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class CategoryPolicy
 {
@@ -41,7 +42,16 @@ class CategoryPolicy
      */
     public function create(User $user)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('create-category', $permissions_array)) {
+
+            return Response::deny('شما مجوز ثبت دسته بندی را ندارید.');
+
+        }
+
+        return true;
+
     }
 
     /**
@@ -53,7 +63,15 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('update-category', $permissions_array)) {
+
+            return Response::deny('شما مجوز ویرایش دسته بندی ها را ندارید.');
+
+        }
+
+        return true;
     }
 
     /**
@@ -65,7 +83,15 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('delete-category', $permissions_array)) {
+
+            return Response::deny('شما مجوز حذف دسته بندی ها را ندارید.');
+
+        }
+
+        return true;
     }
 
     /**
@@ -90,5 +116,32 @@ class CategoryPolicy
     public function forceDelete(User $user, Category $category)
     {
         //
+    }
+
+    public function manageCategories(User $user)
+    {
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('manage-categories', $permissions_array)) {
+
+            return Response::deny('شما مجوز دسترسی به مدیریت دسته بندی ها را ندارید.');
+
+        }
+
+        return true;
+    }
+
+    public function getUserPermissionsArray($user)
+    {
+        $permissions_array = $user->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('ability')
+            ->toArray();
+
+        return $permissions_array;
+
     }
 }

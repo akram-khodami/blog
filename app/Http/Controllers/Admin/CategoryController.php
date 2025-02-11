@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Traits\AuthorizationsTrait;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
+    use AuthorizationsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -17,9 +20,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        Gate::authorize('manageCategories', Category::class);
+
         $data['title'] = 'فهرست دسته بندی ها';
         $data['active'] = 'categories';
         $data['categories'] = Category::orderBy("created_at", "desc")->paginate(10);
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view("admin.category.all", $data);
     }
@@ -31,7 +37,6 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -42,6 +47,8 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
+        Gate::authorize('create', Category::class);
+
         $category = new Category;
         $category->title = $request->title;
         $category->save();
@@ -72,6 +79,7 @@ class CategoryController extends Controller
         $data['category'] = $category;
         $data['title'] = 'ویرایش دسته بندی ها';
         $data['categories'] = Category::orderBy("created_at", "desc")->paginate(10);
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view("admin.category.all", $data);
     }
@@ -85,6 +93,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        Gate::authorize('update', $category);
+
         $category->title = $request->title;
         $category->save();
 
@@ -101,6 +111,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        Gate::authorize('delete', $category);
+
         $category->posts()->detach();
 
         $category->delete();

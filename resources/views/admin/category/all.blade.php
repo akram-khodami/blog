@@ -1,4 +1,9 @@
 @extends('theme.admin_theme')
+@section('operations')
+    <a href="{{ url('categories') }}" class="btn btn-outline-success btn-sm btn-shadow">
+        <i class="fa fa-plus text-sucess"></i>
+    </a>
+@endsection
 @section('content')
     @include('admin.category.create')
     <div class="table-responsive mt-1">
@@ -19,13 +24,7 @@
                     <tr>
                         <td>{{ $i }}</td>
                         <td>{{ $category->title }}</td>
-                        <td>
-                            <?php
-                            $date = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($category->created_at));
-                            
-                            echo \Morilog\Jalali\CalendarUtils::convertNumbers($date);
-                            ?>
-                        </td>
+                        <td>@jalali($category->created_at)</td>
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <a href="{{ url('categories/' . $category->id . '/edit') }}"

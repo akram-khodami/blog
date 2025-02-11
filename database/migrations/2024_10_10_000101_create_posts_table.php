@@ -12,17 +12,18 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->string('title', 255);
             $table->text('content');
-            $table->string('name', 255)->default('ناشناس');
-            $table->string('email')->nullable();
-            $table->boolean('confirmed')->default(0);
+            $table->string('image', 500)->nullable();
+            $table->string('slug', 500);
+            $table->boolean('published')->default(1)->comment('نمایش داده شود');
+            $table->boolean('active_comment')->default(1);
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('post_id');
-            $table->timestamps();
-            $table->foreign('post_id')->references('id')->on('posts');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -33,6 +34,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('posts');
     }
 };

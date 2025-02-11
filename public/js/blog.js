@@ -1,3 +1,5 @@
+"use strict";
+
 var _token = $('meta[name="csrf_token"]').attr('content');
 
 function set_record_id(id, selector) {
@@ -25,9 +27,28 @@ function deleteRecord(url, data, successMessage, place_selector) {
 
 }
 
+function deleteUser(id) {
+
+    var url = APP_URL + '/users/' + id;
+
+    var data = {
+        'id': id,
+        '_token': _token,
+        '_method': 'delete'
+    };
+
+    var successMessage = 'این کاربر با موفقیت حذف شد.';
+
+    var place_selector = "#tr" + id
+
+    deleteRecord(url, data, successMessage, place_selector);
+
+}
+
+
 function deleteRole(id) {
 
-    var url = 'roles/' + id;
+    var url = APP_URL + '/roles/' + id;
 
     var data = {
         'id': id,
@@ -45,7 +66,7 @@ function deleteRole(id) {
 
 function deletePermission(id) {
 
-    var url = 'permissions/' + id;
+    var url = APP_URL + '/permissions/' + id;
 
     var data = {
         'id': id,
@@ -63,7 +84,7 @@ function deletePermission(id) {
 
 function deleteUserRole(user, role) {
 
-    var url = 'deleteUserRole';
+    var url = APP_URL + '/deleteUserRole';
 
     var data = {
         'user': user,
@@ -82,7 +103,7 @@ function deleteUserRole(user, role) {
 
 function deleteComment(id) {
 
-    var url = 'comments/' + id;
+    var url = APP_URL + '/comments/' + id;
 
     var data = {
         'id': id,
@@ -95,6 +116,72 @@ function deleteComment(id) {
     var place_selector = "#card" + id
 
     deleteRecord(url, data, successMessage, place_selector);
+
+}
+
+function inActiveUser(id) {
+
+    var url = APP_URL + '/inActiveUser';
+
+    var data = {
+        'id': id,
+        '_token': _token
+    };
+
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: data,
+        success: function (result) {
+
+            var successMessage = 'این کاربر با موفقیت غیر فعال شد.';
+
+            $('#ajax_success_message').show();
+
+            $('#ajax_success_message').html(successMessage);
+
+            var new_button = '<i class="btn fas fa-user-check text-success" id="activeUser' + id + '" ' +
+                'onclick="activeUser(' + id + ')" title="فعال کردن کاربر"></i>';
+
+            $('#inActiveUser' + id).replaceWith(new_button);
+
+            $('#active_status' + id).html('<div class="text-danger">' + 'غیر فعال' + '</div>');
+
+        }
+    });
+
+}
+
+function activeUser(id) {
+
+    var url = APP_URL + '/activeUser';
+
+    var data = {
+        'id': id,
+        '_token': _token
+    };
+
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: data,
+        success: function (result) {
+
+            var successMessage = 'این کاربر با موفقیت فعال شد.';
+
+            $('#ajax_success_message').show();
+
+            $('#ajax_success_message').html(successMessage);
+
+            var new_button = '<i class="btn fa fa-user-lock text-dark" id="inActiveUser' + id + '" ' +
+                'onclick="inActiveUser(' + id + ')" title="غیر فعال کردن کاربر"></i>';
+
+            $('#activeUser' + id).replaceWith(new_button);
+
+            $('#active_status' + id).html('<div class="text-success">' + 'فعال' + '</div>');
+
+        }
+    });
 
 }
 

@@ -12,16 +12,15 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('role_user', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
-            $table->text('content');
-            $table->string('image', 500)->nullable();
-            $table->string('slug', 500);
-            $table->boolean('published')->default(1)->comment('نمایش داده شود');
-            $table->boolean('active_comment')->default(1);
+            $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('user_id');
+            $table->foreign('role_id')->references('id')->on('roles');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->boolean('status')->default(1);
+            $table->unique(['role_id', 'user_id']); // Ensure uniqueness
+//            $table->primary(['role_id', 'user_id']); // Composite primary key( it works without line $table->id();)
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('role_user');
     }
 };

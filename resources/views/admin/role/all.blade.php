@@ -1,4 +1,9 @@
 @extends('theme.admin_theme')
+@section('operations')
+    <a href="{{ url('roles') }}" class="btn btn-outline-success btn-sm btn-shadow">
+        <i class="fa fa-plus text-sucess"></i>
+    </a>
+@endsection
 @section('content')
     @if (!empty($role))
         <form action="{{ url('roles/' . $role->id) }}" method="post">

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "940f9052ce470fa8d68f8b70af573f3a",
+    "content-hash": "ac0bc43abc03e7ef23924b85c764b46a",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -8116,6 +8116,84 @@
                 }
             ],
             "time": "2020-09-28T06:39:44+00:00"
+        },
+        {
+            "name": "socialblue/laravel-query-adviser",
+            "version": "3.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/socialblue/laravel-query-adviser.git",
+                "reference": "bf748e122ebb5138bea2abdfa64cbb195979018c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/socialblue/laravel-query-adviser/zipball/bf748e122ebb5138bea2abdfa64cbb195979018c",
+                "reference": "bf748e122ebb5138bea2abdfa64cbb195979018c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-pdo": "*",
+                "php": "*"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.5",
+                "guzzlehttp/promises": "^1.5",
+                "orchestra/testbench": "^6.19",
+                "symplify/easy-coding-standard": "^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "LaravelQueryAdviser": "Socialblue\\LaravelQueryAdviser\\LaravelQueryAdviserFacade"
+                    },
+                    "providers": [
+                        "Socialblue\\LaravelQueryAdviser\\LaravelQueryAdviserServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Socialblue\\LaravelQueryAdviser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mark",
+                    "email": "mark.broersen@outlook.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "With Laravel Query Adviser you can get more insights into the SQL queries created by Eloquent models used in your app. It logs the queries used by your application and provides a helpful overview of the SQL queries. You can rerun the SQL query to analyze the database impact or copy the SQL query to your clipboard. The handy card view allows you to quickly point out the pain points of your application's SQL queries.",
+            "homepage": "https://github.com/socialblue/laravel-query-adviser",
+            "keywords": [
+                "Insights",
+                "advisor",
+                "application",
+                "eloquent",
+                "jeloquent",
+                "laravel",
+                "laravel-query-adviser",
+                "mssql",
+                "mysql",
+                "performance",
+                "query",
+                "socialblue",
+                "sql",
+                "testing"
+            ],
+            "support": {
+                "docs": "https://github.com/socialblue/laravel-query-adviser#readme",
+                "issues": "https://github.com/socialblue/laravel-query-adviser/issues",
+                "source": "https://github.com/socialblue/laravel-query-adviser/tree/develop",
+                "wiki": "https://github.com/socialblue/laravel-query-adviser/wiki"
+            },
+            "time": "2023-11-01T21:26:28+00:00"
         },
         {
             "name": "spatie/backtrace",

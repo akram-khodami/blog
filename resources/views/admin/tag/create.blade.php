@@ -13,6 +13,8 @@
 
         @csrf
 
+        <small> {{ !empty($tag->title) ? 'عنوان ذخیره شده قبلی:' . $tag->title : '' }} </small>
+
         <div class="form-group">
             <label for="title">عنوان</label>
             <input type="text" class="form-control" id="title" aria-describedby="titleHelp" placeholder=""
@@ -23,7 +25,8 @@
         </div>
 
         @if (!empty($tag))
-            <button type="submit" class="btn btn-outline-warning">ذخیره تغییرات</button>
+            <button type="submit" class="btn btn-warning btn-sm">ذخیره تغییرات</button>
+            <a href="{{ url('tags') }}" class="btn btn-danger btn-sm">انصراف</a>
         @else
             <button type="submit" class="btn btn-primary">ثبت</button>
         @endif

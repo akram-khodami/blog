@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Traits\AuthorizationsTrait;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use Auth;
+use Illuminate\Support\Facades\Gate;
 use Request;
 
 class RoleController extends Controller
 {
+    use AuthorizationsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -18,9 +22,12 @@ class RoleController extends Controller
      */
     public function index()
     {
+        Gate::authorize('manageRoles', Role::class);
+        
         $data['active'] = 'roles';
         $data['title'] = 'نقش ها';
         $data['roles'] = Role::paginate(10);
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view('admin.role.all', $data);
     }
@@ -43,6 +50,8 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
+        Gate::authorize('create', Role::class);
+
         $role = new Role;
         $role->name = $request->name;
         $role->save();
@@ -63,11 +72,9 @@ class RoleController extends Controller
         $data['title'] = 'مشاهده نقش ' . $role->name;
         $data['active'] = 'roles';
         $data['role'] = $role;
-        $data['permissions'] = Permission::all();
+        $data['permissions'] = Permission::orderBy("ability", "asc")->get();
         $data['role_permissions'] = $role->permissions()->pluck('permissions.id')->toArray();
-
-
-        // dd($data['role_permissions']);
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view('admin.role.show', $data);
     }
@@ -84,6 +91,7 @@ class RoleController extends Controller
         $data['active'] = 'roles';
         $data['title'] = 'ویرایش نقش ' . $role->name;
         $data['roles'] = Role::paginate(10);
+        $data['manuAuthorizations'] = $this->getMenuAuthorizations(Auth::user());
 
         return view('admin.role.all', $data);
     }
@@ -97,6 +105,8 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+        Gate::authorize('update', $role);
+
         $role->name = $request->name;
         $role->save();
 
@@ -112,6 +122,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        Gate::authorize('delete', $role);
+
         $role->users()->detach();
 
         $role->delete();

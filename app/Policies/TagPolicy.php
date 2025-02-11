@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Admin\Tag;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class TagPolicy
 {
@@ -25,7 +26,7 @@ class TagPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function view(User $user, Tag $tag)
@@ -41,38 +42,64 @@ class TagPolicy
      */
     public function create(User $user)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('create-tag', $permissions_array)) {
+
+            return Response::deny('شما مجوز ثبت تگ را ندارید.');
+
+        }
+
+        return true;
+
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function update(User $user, Tag $tag)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('update-tag', $permissions_array)) {
+
+            return Response::deny('شما مجوز ویرایش تگ را ندارید.');
+
+        }
+
+        return true;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function delete(User $user, Tag $tag)
     {
-        //
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('delete-tag', $permissions_array)) {
+
+            return Response::deny('شما مجوز حذف تگ را ندارید.');
+
+        }
+
+        return true;
+
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function restore(User $user, Tag $tag)
@@ -84,11 +111,38 @@ class TagPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Admin\Tag  $tag
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function forceDelete(User $user, Tag $tag)
     {
         //
+    }
+
+    public function manageTags(User $user)
+    {
+        $permissions_array = $this->getUserPermissionsArray($user);
+
+        if (!in_array('manage-tags', $permissions_array)) {
+
+            return Response::deny('شما مجوز دسترسی به مدیریت تگ ها را ندارید.');
+
+        }
+
+        return true;
+    }
+
+    public function getUserPermissionsArray($user)
+    {
+        $permissions_array = $user->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('ability')
+            ->toArray();
+
+        return $permissions_array;
+
     }
 }

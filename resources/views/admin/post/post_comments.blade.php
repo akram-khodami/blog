@@ -6,10 +6,7 @@
                     <div class="w-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <p class="mb-0">
-                                <?php
-                                $date2 = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($comment->created_at));
-                                echo \Morilog\Jalali\CalendarUtils::convertNumbers($date2);
-                                ?>
+                                @jalali($comment->created_at)
                                 {{ $comment->name }}
                             </p>
                             <p class="text-primary fw-bold mb-0">

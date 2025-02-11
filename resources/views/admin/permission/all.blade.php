@@ -1,31 +1,12 @@
 @extends('theme.admin_theme')
+@section('operations')
+    <a href="{{ url('permissions') }}" class="btn btn-outline-success btn-sm btn-shadow">
+        <i class="fa fa-plus text-sucess"></i>
+    </a>
+@endsection
 @section('content')
-
-    @if (!empty($permission))
-        <form action="{{ url('permissions/' . $permission->id) }}" method="post">
-            @method('patch')
-        @else
-            <form action="{{ url('permissions') }}" method="post">
-    @endif
-
-    @csrf
-    <div class="form-group">
-        <label for="name">عنوان</label>
-        <input type="text" name="name" id="name" class="form-control"
-            value="{{ old('name', isset($permission->name) ? $permission->name : '') }}">
-    </div>
-
-    @if (!empty($permission))
-        <button type="submit" class="btn btn-outline-warning btn-sm">ذخیره تغییرات</button>
-        <a href="{{ url('permissions') }}" class="btn btn-outline-danger btn-sm">انصراف</a>
-    @else
-        <button type="submit" class="btn btn-primary btn-sm">ثبت</button>
-    @endif
-
-    </form>
-
+    @include('admin.permission.create')
     <hr>
-
     <div class="table-responsive">
         @if (!empty($permissions))
             <table class="table table-bordered table-striped table-hover">
@@ -33,6 +14,8 @@
                     <tr>
                         <th>ردیف</th>
                         <th>نام</th>
+                        <th>قابلیت</th>
+                        <th>توضیحات</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
@@ -44,6 +27,8 @@
                         <tr id="tr{{ $permission->id }}">
                             <td>{{ $i }}</td>
                             <td>{{ $permission->name }}</td>
+                            <td>{{ $permission->ability }}</td>
+                            <td>{{ $permission->description }}</td>
                             <td>
                                 <i class="btn fa fa-trash-alt text-danger"
                                     onclick="deletePermission({{ $permission->id }})"></i>
