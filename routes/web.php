@@ -1,16 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Blog\BlogController;
-use App\Http\Controllers\Admin\PostController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\CategoryController;
-
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('roles/addPermission', [RoleController::class, 'addPermission']);
 
     Route::delete('destroy/posts', [PostController::class, 'destroyAll']);
+
+    Route::get('download/{imageName}', function ($image) {
+
+        return response()->download(public_path('upload/images' . $image));
+
+    })->name('download');
 
 });
 require __DIR__ . '/auth.php';

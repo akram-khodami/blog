@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Property;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tag>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Value>
  */
-class TagFactory extends Factory
+class ValueFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +18,8 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'title' => fake()->title()
+            'title' => fake()->title(),
+            'property_id' => Property::factory()
         ];
     }
 }

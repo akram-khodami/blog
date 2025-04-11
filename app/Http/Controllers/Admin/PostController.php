@@ -94,18 +94,26 @@ class PostController extends Controller
 
         //===end Policy===========================================================
 
+
         if ($request->hasFile(key: 'image')) {
 
+            $request->validate(['iamge' => 'max:20']);
+
+//            $image = $request->image;
             $image = $request->file('image');
 
-            $path = $image->storeAs(
-                'public/uploads/post/images',
-                time() . '.' . $image->extension()
-            );
+//            $extension = $image->getClientOriginalExtension();
+            $extension = $image->extension();
+
+//            $originalName = $image->getClientOriginalName();
+
+            $imageNewName = time() . '.' . $extension;
+
+            $path = $image->storeAs('upload/images', $imageNewName);
 
         } else {
 
-            $path = NULL;
+            $imageNewName = NULL;
 
         }
 
@@ -115,7 +123,7 @@ class PostController extends Controller
                 'content' => request('content'),
                 'slug' => request('title'),
                 'user_id' => Auth::user()->id,
-                'image' => $path
+                'image' => $imageNewName
             ]);
 
             $post->categories()->attach(request('categories'));
@@ -205,10 +213,9 @@ class PostController extends Controller
 
             $image = $request->file('image');
 
-            $path = $image->storeAs(
-                'public/uploads/post/images',
-                time() . '.' . $image->extension()
-            );
+            $extension = $image->extension();
+
+            $path = $image->storeAs('upload/images', time() . '.' . $extension);
 
             $post->image = $path;
 

@@ -99,7 +99,7 @@
             <div class="col-lg-8 col-sm-12">
                 @if (!empty($posts))
                     @foreach ($posts as $post)
-                        <div class="about_img"><img src="{{ Storage::url($post->image) }}"></div>
+                        <div class="about_img"><img src="{{ asset('upload/images/'.$post->image) }}"></div>
                         <div class="like_icon"><img src="{{ url('images/like-icon.png') }}"></div>
                         <p class="post_text">
                         <p class="post_text">

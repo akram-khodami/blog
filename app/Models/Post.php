@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use App\Policies\PostPolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Models\Category;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
@@ -19,8 +15,6 @@ class Post extends Model
 
 
     protected $guarded = ['_token'];
-
-
 
     /**
      * The "booted" method of the model.
@@ -39,15 +33,21 @@ class Post extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments(): HasMany
+//    public function comments(): HasMany
+//    {
+//        return $this->hasMany(Comment::class, 'post_id', 'id');
+//    }
+
+    public function comments(): MorphMany
     {
-        return $this->hasMany(Comment::class, 'post_id', 'id');
+//        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable', 'commentable_type', 'commentable_id', 'id');
     }
 
     /**
      * Get all of the categories for the Post
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function categories(): BelongsToMany
     {

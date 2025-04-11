@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Blog;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Comment;
 use App\Models\Post;
+use App\Services\CommentService;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -58,24 +58,36 @@ class BlogController extends Controller
         $data['post'] = $post;//اطلاعات نوشته
         $data['categories'] = $categories;
         $data['posts'] = Post::where([['id', '!=', $id], ['published', '=', 1]])->orderBy("created_at", "desc")->limit(5)->get();//5 نوشته اخیر
-        $data['comments'] = Comment::where([['post_id', '=', $id], ['confirmed', '=', 1]])->paginate(10);//نظرات تایید شده این نوشته
+        $data['comments'] = $post->comments()->confirmed()->paginate(10);
 
         return view("blog.post.post", $data);
 
     }
 
-    public function storeComment()
+    public function storeComment(Request $request, CommentService $commentService)
     {
-        Comment::create([
-            'content' => request('content'),
-            'name' => request('name'),
-            'email' => request('email'),
-            'user_id' => Auth::user()->id,
-            'post_id' => request('post_id'),
+        // Ensure the user is authenticated
+        if (!Auth::check()) {
+            return redirect()->back()->withErrors(['error_message' => 'برای ثبت نظر باید وارد شوید.']);
+        }
+
+        // Validate input
+        $validatedData = $request->validate([
+            'content' => 'required|string|max:1000',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'post_id' => 'required|exists:posts,id',
         ]);
 
-        return redirect()->back()->with("success_message", "نظر با موفقیت ثبت شد.");
+        // Find the post
+        $post = Post::findOrFail($validatedData['post_id']);
 
+        // Create the comment
+        if ($commentService->createComment($post, $validatedData, Auth::id())) {
+            return redirect()->back()->with('success_message', 'نظر با موفقیت ثبت شد.');
+        }
+
+        return redirect()->back()->withErrors(['error_message' => 'نظر با موفقیت ثبت نشد. لطفاً دوباره تلاش کنید.']);
     }
 
     public function category_posts($category_id)
